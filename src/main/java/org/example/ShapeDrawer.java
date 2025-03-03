@@ -1,5 +1,6 @@
 package org.example;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ShapeDrawer extends JFrame {
 
@@ -15,14 +17,15 @@ public class ShapeDrawer extends JFrame {
     private final ObjectMapper mapper = new ObjectMapper();
     private Shape selectedShape = null;
     private Point delta;
-    Color color = Color.ORANGE;
-    Canvas canvas = new Canvas();
+
+    Color colorOrange = Color.orange;
+    Color colorGreen = Color.green;
+
     private boolean isKeyPressed = false;
-    Circle circle = new Circle();
-    Square square = new Square();
-    Triangle triangle = new Triangle();
+    private static final ShapeFactory SHAPE_FACTORY = new ShapeFactory();
+
     public  int x = 100, y = 100, size = 100;
-    private Point groupOffset = new Point(0, 0);
+    private Point groupOffset = new Point();
 
     public ShapeDrawer() {
         setTitle("Drawer");
@@ -51,26 +54,26 @@ public class ShapeDrawer extends JFrame {
         buttonPanel.add(btnUnGroup);
 
         buttonPanel.requestFocusInWindow();
-
         add(buttonPanel, BorderLayout.NORTH);
 
+        Canvas canvas = new Canvas();
         add(canvas,BorderLayout.CENTER);
 
         btnCircle.addActionListener(e ->{
-            shapes.add(new Shape("circle", x, y, size, color));
+            shapes.add(SHAPE_FACTORY.create("circle", x, y, size, colorOrange));
             canvas.repaint();
         });
         btnSquare.addActionListener(e -> {
-            shapes.add(new Shape("square", x + 200, y, size, color));
+            shapes.add(SHAPE_FACTORY.create("square", x + 200, y, size, colorOrange));
             canvas.repaint();
         });
         btnTriangle.addActionListener(e -> {
-            shapes.add(new Shape("triangle", x + 400, y, size, color));
+            shapes.add(SHAPE_FACTORY.create("triangle", x + 400, y, size, colorOrange));
             canvas.repaint();
         });
         btnGroup.addActionListener(e ->{
             for (Shape shape : shapes){
-                if (shape.color == Color.GREEN){
+                if (shape.color == colorGreen){
                     shape.setGrouped(true);
                 }
             }
@@ -106,7 +109,7 @@ public class ShapeDrawer extends JFrame {
             public void mousePressed(MouseEvent e) {
                 canvas.requestFocusInWindow();
                 for (Shape shape : shapes) {
-                    if (isInsideShape(e.getPoint(), shape)) {
+                    if (shape.isInside(e.getPoint())) {
                         selectedShape = shape;
                         delta = new Point(e.getX() - shape.x, e.getY() - shape.y);
                         break;
@@ -117,7 +120,7 @@ public class ShapeDrawer extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                selectedShape = null;
+              //  selectedShape = null;
             }
 
             @Override
@@ -125,13 +128,13 @@ public class ShapeDrawer extends JFrame {
                 canvas.requestFocusInWindow();
                 for (Shape shape : shapes) {
                     if (!isKeyPressed){
-                        shape.color = Color.ORANGE;
+                        shape.color = colorOrange;
                     }
-                    if (isInsideShape(e.getPoint(), shape)) {
-                        if (shape.color == Color.ORANGE){
-                            shape.color = Color.GREEN;
+                    if (shape.isInside(e.getPoint())) {
+                        if (shape.color == colorOrange){
+                            shape.color = colorGreen;
                         } else {
-                            shape.color = Color.ORANGE;
+                            shape.color = colorOrange;
                         }
                     }
                 }
@@ -160,7 +163,7 @@ public class ShapeDrawer extends JFrame {
 
     private void saveShapes(){
         try {
-            String json = mapper.writeValueAsString(shapes);
+            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(shapes);
             try (Writer writer = new BufferedWriter(new FileWriter("shapes.json"))) {
                 writer.write(json);
             }
@@ -171,24 +174,23 @@ public class ShapeDrawer extends JFrame {
     }
     private void loadShapes() {
         try {
-            shapes = List.of(mapper.readValue(new File("shapes.json"), Shape[].class));
+            List<Map<String, Object>> loadedShapes = new ArrayList<>();
+            loadedShapes = mapper.readValue(new File("shapes.json"), new TypeReference<List<Map<String, Object>>>() {});
+            System.out.println(loadedShapes);
+            shapes.clear();
+            for (Map<String, Object> shape : loadedShapes) {
+                String type = (String) shape.get("type");
+                int x = (int) shape.get("x");
+                int y = (int) shape.get("y");
+                int size = (int) shape.get("size");
+                Color color = colorOrange;
+                shapes.add(SHAPE_FACTORY.create(type, x, y, size, color));
+            }
             repaint();
             JOptionPane.showMessageDialog(this, "Shapes loaded successfully!");
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private boolean isInsideShape(Point p, Shape shape) {
-        switch (shape.type) {
-            case "circle":
-                return circle.isInside(p, shape);
-            case "square":
-                return square.isInside(p, shape);
-            case "triangle":
-                return triangle.isInside(p, shape);
-        }
-        return false;
     }
 
     public class Canvas extends JPanel {
@@ -201,17 +203,7 @@ public class ShapeDrawer extends JFrame {
                 }
             }
             for (Shape shape : shapes) {
-                switch (shape.type) {
-                    case "circle":
-                        circle.paintComponent(g,shape);
-                        break;
-                    case "square":
-                        square.paintComponent(g,shape);
-                        break;
-                    case "triangle":
-                        triangle.paintComponent(g,shape);
-                        break;
-                }
+                shape.paintComponent(g);
             }
 
        }

@@ -2,13 +2,11 @@ package org.example;
 
 import java.awt.*;
 
-public class Shape {
+public abstract class Shape {
     public String type;
     public int x, y, size;
     public Color color;
     public boolean selected, grouped;
-
-    public Shape(){}
 
     public Shape(String type, int x, int y, int size, Color color) {
         this.type = type;
@@ -18,11 +16,13 @@ public class Shape {
         this.color = color;
     }
 
-//    public void move(int dx, int dy) {
-//        this.x = dx + 100;
-//        this.y = dy;
-//    }
+    public abstract void paintComponent(Graphics g);
+    public abstract boolean isInside(Point p);
 
+    public void move(int dx, int dy) {
+        this.x += dx;
+        this.y += dy;
+    }
     public void setSelected(boolean selected) {
         this.selected = selected;
     }

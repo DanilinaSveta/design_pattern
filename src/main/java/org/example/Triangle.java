@@ -1,20 +1,21 @@
 package org.example;
 
-import javax.swing.*;
 import java.awt.*;
 
-public class Triangle extends JPanel {
-    protected void paintComponent(Graphics g, Shape shape){
-        super.paintComponent(g);
-        g.setColor(shape.color);
-        int[] xPoints = {shape.x, shape.x - shape.size / 2, shape.x + shape.size / 2};
-        int[] yPoints = {shape.y, shape.y + shape.size, shape.y + shape.size};
+public class Triangle extends Shape {
+    public Triangle(int x, int y, int size, Color color){
+        super("triangle", x, y, size, color);
+    }
+    public void paintComponent(Graphics g){
+        g.setColor(color);
+        int[] xPoints = {x, x - size / 2, x + size / 2};
+        int[] yPoints = {y, y + size, y + size};
         g.fillPolygon(xPoints, yPoints, 3);
     }
-    public boolean isInside(Point p, Shape shape){
-        return p.x >= shape.x - shape.size / 2 &&
-                p.x <= shape.x + shape.size / 2 &&
-                p.y >= shape.y &&
-                p.y <= shape.y + shape.size;
+    public boolean isInside(Point p){
+        return p.x >= x - size / 2 &&
+                p.x <= x + size / 2 &&
+                p.y >= y &&
+                p.y <= y + size;
     }
 }

@@ -1,18 +1,20 @@
 package org.example;
 
-import javax.swing.*;
 import java.awt.*;
 
-public class Square extends JPanel {
-    protected void paintComponent(Graphics g, Shape shape){
-        super.paintComponent(g);
-        g.setColor(shape.color);
-        g.fillRect(shape.x, shape.y, shape.size, shape.size);
+public class Square extends Shape {
+    public Square(int x, int y, int size, Color color){
+        super("square", x, y, size, color);
     }
-    public boolean isInside(Point p, Shape shape){
-        return p.x >= shape.x &&
-                p.x <= shape.x + shape.size &&
-                p.y >= shape.y &&
-                p.y <= shape.y + shape.size;
+
+    public void paintComponent(Graphics g){
+        g.setColor(color);
+        g.fillRect(x, y, size, size);
+    }
+    public boolean isInside(Point p){
+        return p.x >= x &&
+                p.x <= x + size &&
+                p.y >= y &&
+                p.y <= y + size;
     }
 }
