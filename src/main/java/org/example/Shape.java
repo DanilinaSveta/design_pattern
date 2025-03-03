@@ -19,19 +19,8 @@ public abstract class Shape {
     public abstract void paintComponent(Graphics g);
     public abstract boolean isInside(Point p);
 
-    public void move(int dx, int dy) {
-        this.x += dx;
-        this.y += dy;
-    }
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
     public void setGrouped(boolean grouped) {
         this.grouped = grouped;
     }
 
-    public boolean isGrouped() {
-        return grouped;
-    }
 }
