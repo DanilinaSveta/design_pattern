@@ -18,4 +18,23 @@ public class Triangle extends Shape {
                 p.y >= y &&
                 p.y <= y + size;
     }
+    @Override
+    public void addShape (Shape shape){}
+
+    @Override
+    public  void removeShape(){};
+
+    @Override
+    public void move(int dx, int dy) {
+        int[] xPoints = {x, x - size / 2, x + size / 2};
+        int[] yPoints = {y, y + size, y + size};
+        this.x += dx;
+        this.y += dy;
+        xPoints[0] += dx;
+        xPoints[1] += dx;
+        xPoints[2] += dx;
+        yPoints[0] += dy;
+        yPoints[1] += dy;
+        yPoints[2] += dy;
+    }
 }

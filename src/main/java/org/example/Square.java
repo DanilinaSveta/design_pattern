@@ -17,4 +17,15 @@ public class Square extends Shape {
                 p.y >= y &&
                 p.y <= y + size;
     }
+    @Override
+    public void addShape (Shape shape){}
+
+    @Override
+    public  void removeShape(){};
+
+    @Override
+    public void move(int dx, int dy) {
+        this.x += dx;
+        this.y += dy;
+    }
 }

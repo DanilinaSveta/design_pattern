@@ -16,4 +16,15 @@ public class Circle extends Shape{
                 Math.pow(p.y - (y + size / 2), 2) <=
                 Math.pow(size / 2, 2);
     }
+    @Override
+    public void addShape (Shape shape){}
+
+    @Override
+    public  void removeShape(){};
+
+    @Override
+    public void move(int dx, int dy) {
+        this.x += dx;
+        this.y += dy;
+    }
 }

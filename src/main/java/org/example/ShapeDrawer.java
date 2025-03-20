@@ -14,9 +14,17 @@ import java.util.Map;
 public class ShapeDrawer extends JFrame {
 
     private List<Shape> shapes = new ArrayList<>();
+    private List<Shape> groupShapes = new ArrayList<>();
     private final ObjectMapper mapper = new ObjectMapper();
     private Shape selectedShape = null;
+    private Shape selectedShapeGroup = null;
     private Point delta;
+    private Point deltaGroup;
+    private boolean btnG = false;
+
+    private Rectangle selectionRectangle;
+    private Point dragStart;
+    private boolean dragging = false;
 
     Color colorOrange = Color.orange;
     Color colorGreen = Color.green;
@@ -25,9 +33,9 @@ public class ShapeDrawer extends JFrame {
     private static final ShapeFactory SHAPE_FACTORY = new ShapeFactory();
 
     public  int x = 100, y = 100, size = 100;
-    private Point groupOffset = new Point();
 
     public ShapeDrawer() {
+        selectionRectangle = new Rectangle(0, 0, 0, 0);
         setTitle("Drawer");
         setSize(1000,700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,18 +79,26 @@ public class ShapeDrawer extends JFrame {
             shapes.add(SHAPE_FACTORY.create("triangle", x + 400, y, size, colorOrange));
             canvas.repaint();
         });
+
+        ShapeGroup shapeGroup = new ShapeGroup();
         btnGroup.addActionListener(e ->{
-            for (Shape shape : shapes){
-                if (shape.color == colorGreen){
-                    shape.setGrouped(true);
-                }
+            btnG = true;
+            for (Shape shape : groupShapes){
+                shapeGroup.addShape(shape);
+                shapes.remove(shape);
             }
+            shapes.add(shapeGroup);
             canvas.repaint();
         });
+
         btnUnGroup.addActionListener(e -> {
-            for (Shape shape : shapes){
-                shape.setGrouped(false);
+            btnG = false;
+            for (Shape shape : groupShapes){
+                shapes.add(shape);
             }
+            shapes.remove(shapeGroup);
+            shapeGroup.removeShape();
+            groupShapes.clear();
             canvas.repaint();
         });
 
@@ -108,19 +124,30 @@ public class ShapeDrawer extends JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
                 canvas.requestFocusInWindow();
+
                 for (Shape shape : shapes) {
                     if (shape.isInside(e.getPoint())) {
                         selectedShape = shape;
                         delta = new Point(e.getX() - shape.x, e.getY() - shape.y);
+                        dragging = false;
                         break;
                     }
+                    else {
+                        dragStart = e.getPoint();
+                        selectionRectangle.setLocation(dragStart);
+                        selectionRectangle.setSize(0, 0);
+                        dragging = true;
+                        repaint();
+                    }
                 }
-                repaint();
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-              //  selectedShape = null;
+                dragging = false;
+                selectionRectangle.setSize(0, 0); // Сброс выделения
+                selectedShape = null;
+                repaint();
             }
 
             @Override
@@ -128,13 +155,18 @@ public class ShapeDrawer extends JFrame {
                 canvas.requestFocusInWindow();
                 for (Shape shape : shapes) {
                     if (!isKeyPressed){
-                        shape.color = colorOrange;
-                    }
-                    if (shape.isInside(e.getPoint())) {
-                        if (shape.color == colorOrange){
-                            shape.color = colorGreen;
-                        } else {
-                            shape.color = colorOrange;
+                        shape.select(false);
+                        if (!btnG){
+                            groupShapes.clear();
+                        }
+                        if (shape.isInside(e.getPoint())){
+                            shape.select(true);
+                            groupShapes.add(shape);
+                        }
+                    } else {
+                        if (shape.isInside(e.getPoint())){
+                            groupShapes.add(shape);
+                            shape.select(true);
                         }
                     }
                 }
@@ -145,13 +177,23 @@ public class ShapeDrawer extends JFrame {
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 for (Shape shape : shapes){
-                    selectedShape.x = e.getX() - delta.x;
-                    selectedShape.y = e.getY() - delta.y;
-                    if (shape.grouped){
-                        groupOffset.translate(selectedShape.x, selectedShape.y);
-                        delta.setLocation(e.getPoint());
-                    } else {
-                        groupOffset.setLocation(e.getX() - shape.x, e.getY() - shape.y);
+                    if (shape.isInside(e.getPoint()) & !dragging) {
+                        selectedShape.x = e.getX() - delta.x;
+                        selectedShape.y = e.getY() - delta.y;
+                    }
+                    if (dragging) {
+                        int x = Math.min(dragStart.x, e.getX());
+                        int y = Math.min(dragStart.y, e.getY());
+                        int width = Math.abs(dragStart.x - e.getX());
+                        int height = Math.abs(dragStart.y - e.getY());
+                        selectionRectangle.setBounds(x, y, width, height);
+                        if (selectionRectangle.intersects(shape.x,shape.y,shape.size,shape.size)){
+                            shape.select(true);
+                            groupShapes.add(shape);
+                        } else {
+                            shape.select(false);
+                            groupShapes.remove(shape);
+                        }
                     }
                 }
                 canvas.repaint();
@@ -197,15 +239,13 @@ public class ShapeDrawer extends JFrame {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            for (Shape shape : shapes){
-                if (shape.grouped) {
-                    g.translate(groupOffset.x, groupOffset.y);
-                }
-            }
             for (Shape shape : shapes) {
                 shape.paintComponent(g);
             }
-
+            if (dragging) {
+                g.setColor(new Color(0, 255, 0, 128)); // Полупрозрачный зеленый
+                g.drawRect(selectionRectangle.x,selectionRectangle.y,selectionRectangle.width,selectionRectangle.height);
+            }
        }
     }
 }
