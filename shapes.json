@@ -1,9 +1,9 @@
 [ {
   "type" : "circle",
-  "x" : 212,
-  "y" : 134,
+  "x" : 100,
+  "y" : 100,
   "size" : 100,
-  "angleS" : 135
+  "angleS" : 0
 }, {
   "type" : "group",
   "x" : 0,
@@ -12,14 +12,14 @@
   "angleS" : 0,
   "shapes" : [ {
     "type" : "square",
-    "x" : 480,
-    "y" : 148,
+    "x" : 300,
+    "y" : 100,
     "size" : 100,
     "angleS" : 0
   }, {
     "type" : "triangle",
-    "x" : 680,
-    "y" : 148,
+    "x" : 500,
+    "y" : 100,
     "size" : 100,
     "angleS" : 0
   } ]

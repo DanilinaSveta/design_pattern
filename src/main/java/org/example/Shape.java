@@ -7,7 +7,7 @@ import java.awt.*;
 public abstract class Shape {
     public String type;
     public int x, y, size;
-    public int angleS = 0;
+    public int angleS;
     @JsonIgnore
     public Color color;
 

@@ -1,13 +1,11 @@
 package org.example;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 
 public class ShapeDrawer extends JFrame {
     Color colorOrange = Color.ORANGE;
@@ -15,9 +13,8 @@ public class ShapeDrawer extends JFrame {
 
     private List<Shape> shapes = new ArrayList<>();
     private List<Shape> groupShapes = new ArrayList<>();
-    private ShapeGroup shapeGroup = new ShapeGroup(0,0,0,colorOrange,0);
+    private ShapeGroup shapeGroup;
 
-    private final ObjectMapper mapper = new ObjectMapper();
     private Shape selectedShape = null;
     private Point delta;
 
@@ -27,8 +24,6 @@ public class ShapeDrawer extends JFrame {
     private Point dragStart;
     private boolean dragging = false;
 
-
-
     private boolean isKeyPressed = false;
     private static final ShapeFactory SHAPE_FACTORY = new ShapeFactory();
 
@@ -36,6 +31,8 @@ public class ShapeDrawer extends JFrame {
 
     public ShapeDrawer() {
         selectionRectangle = new Rectangle(0, 0, 0, 0);
+        shapeGroup = new ShapeGroup(0,0,0,colorOrange,0);
+
         setTitle("Drawer");
         setSize(1000,700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,17 +105,16 @@ public class ShapeDrawer extends JFrame {
             shapes.remove(shapeGroup);
             shapeGroup.removeShape();
             groupShapes.clear();
-            canvas.repaint();
+            repaint();
         });
 
         btnTurn.addActionListener( e ->{
             for (Shape shape : shapes){
-                if (shape.color == Color.GREEN){
-                   // System.out.println("ПОВОРОТ");
+                if (shape.color == Color.GREEN || (shapeGroup.color == Color.GREEN && shape.type.equals("group") ))  {
                     shape.angle(45);
                 }
             }
-            canvas.repaint();
+            repaint();
         });
 
         btnSave.addActionListener(e -> saveShapes());
@@ -175,11 +171,13 @@ public class ShapeDrawer extends JFrame {
                 for (Shape shape : shapes) {
                     if (!isKeyPressed){
                         shape.select(false);
+                        shapeGroup.color = Color.ORANGE;
                         if (!btnG){
                             groupShapes.clear();
                         }
                         if (shape.isInside(e.getPoint())){
                             shape.select(true);
+                            shapeGroup.color = Color.GREEN;
                             selectedShape = shape;
                             groupShapes.add(shape);
                         }
@@ -187,6 +185,7 @@ public class ShapeDrawer extends JFrame {
                         if (shape.isInside(e.getPoint())){
                             groupShapes.add(shape);
                             shape.select(true);
+                            shapeGroup.color = Color.ORANGE;
                         }
                     }
                 }
@@ -230,7 +229,7 @@ public class ShapeDrawer extends JFrame {
         JOptionPane.showMessageDialog(this, "Shapes saved successfully!");
     }
     private void loadShapes(){
-        ShapeSerializer.readShapesFromJson("shapes.json",shapes, shapeGroup, SHAPE_FACTORY);
+        ShapeSerializer.readShapesFromJson("shapes.json",shapes, shapeGroup, SHAPE_FACTORY, groupShapes);
         repaint();
         JOptionPane.showMessageDialog(this, "Shapes loaded successfully!");
     }
