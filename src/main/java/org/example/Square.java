@@ -2,14 +2,18 @@ package org.example;
 
 import java.awt.*;
 
+
 public class Square extends Shape {
-    public Square(int x, int y, int size, Color color){
-        super("square", x, y, size, color);
+    public Square(int x, int y, int size, Color color, int angleS){
+        super("square", x, y, size, color, angleS);
     }
 
     public void paintComponent(Graphics g){
-        g.setColor(color);
-        g.fillRect(x, y, size, size);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(color);
+        g2.rotate(Math.toRadians(angleS), x + (double) size / 2, y + (double) size / 2);
+        g2.fillRect(x, y, size, size);
+        g2.rotate(Math.toRadians(-angleS), x + (double) size / 2, y + (double) size / 2);
     }
     public boolean isInside(Point p){
         return p.x >= x &&

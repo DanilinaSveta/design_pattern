@@ -1,16 +1,21 @@
 package org.example;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 public class Triangle extends Shape {
-    public Triangle(int x, int y, int size, Color color){
-        super("triangle", x, y, size, color);
+    private Rectangle2D rectangle;
+    public Triangle(int x, int y, int size, Color color, int angleS){
+        super("triangle", x, y, size, color, angleS);
     }
     public void paintComponent(Graphics g){
-        g.setColor(color);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(color);
         int[] xPoints = {x, x - size / 2, x + size / 2};
         int[] yPoints = {y, y + size, y + size};
-        g.fillPolygon(xPoints, yPoints, 3);
+        g2.rotate(Math.toRadians(angleS), x  , y + (double) size / 2);
+        g2.fillPolygon(xPoints, yPoints, 3);
+        g2.rotate(Math.toRadians(-angleS), x  , y + (double) size /2);
     }
     public boolean isInside(Point p){
         return p.x >= x - size / 2 &&
@@ -37,4 +42,12 @@ public class Triangle extends Shape {
         yPoints[1] += dy;
         yPoints[2] += dy;
     }
+//    @Override
+//    public Rectangle2D getBounds() {
+//        return rectangle;
+//    }
+//    @Override
+//    public void rotate(int angle){
+//        System.out.println("Поворот треугольник");
+//    }
 }

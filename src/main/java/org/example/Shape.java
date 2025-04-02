@@ -1,20 +1,25 @@
 package org.example;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.awt.*;
 
 public abstract class Shape {
     public String type;
     public int x, y, size;
+    public int angleS = 0;
+    @JsonIgnore
     public Color color;
 
     public Shape(){}
 
-    public Shape(String type, int x, int y, int size, Color color) {
+    public Shape(String type, int x, int y, int size, Color color, int angleS) {
         this.type = type;
         this.x = x;
         this.y = y;
         this.size = size;
         this.color = color;
+        this.angleS = angleS;
     }
 
     public abstract void paintComponent(Graphics g);
@@ -28,6 +33,12 @@ public abstract class Shape {
             this.color = Color.GREEN;
         } else {
             this.color = Color.ORANGE;
+        }
+    }
+    public void angle(int angle){
+        angleS += angle;
+        if (angleS == 360){
+            angleS = 0;
         }
     }
 
