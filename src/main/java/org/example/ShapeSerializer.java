@@ -26,13 +26,14 @@ public class ShapeSerializer {
             String filename,
             List<Shape> shapes,
             ShapeGroup shapeGroup,
-            ShapeFactory SHAPE_FACTORY,
-            List<Shape> groupShapes){
+            ShapeFactory SHAPE_FACTORY
+            //List<Shape> groupShapes
+    ){
         try {
-            groupShapes.clear();
+           // groupShapes.clear();
             List<Map<String, Object>> loadedShapes = new ArrayList<>();
             loadedShapes = objectMapper.readValue(new File(filename), new TypeReference<List<Map<String, Object>>>() {});
-            System.out.println(loadedShapes);
+           // System.out.println(loadedShapes);
             shapes.clear();
 
             for (Map<String, Object> shape : loadedShapes) {
@@ -47,7 +48,7 @@ public class ShapeSerializer {
                     shapeGroup.removeShape();
                     List<Map<String, Object>> shapes1 = new ArrayList<>();
                     shapes1 = (List<Map<String, Object>>) shape.get("shapes");
-                    System.out.println(shapes1);
+                  //  System.out.println(shapes1);
                     for (Map<String, Object> shape1 : shapes1){
                          String typeG = (String) shape1.get("type");
                          int xG = (int) shape1.get("x");
@@ -56,7 +57,7 @@ public class ShapeSerializer {
                         Color colorG = Color.ORANGE;
                         int angleSG = (int) shape1.get("angleS");
                         shapeGroup.addShape(SHAPE_FACTORY.create(typeG , xG, yG, sizeG, colorG, angleSG));
-                        groupShapes.add(shapeGroup);
+                       // groupShapes.add(shapeGroup);
                     }
                     shapes.add(shapeGroup);
                     break;
@@ -68,4 +69,42 @@ public class ShapeSerializer {
         }
         return shapes;
     }
+
+    public static List<Shape> GroupShapes (
+            List<Shape> groupShapes,
+            String filename,
+            ShapeGroup shapeGroup,
+            ShapeFactory SHAPE_FACTORY){
+        groupShapes.clear();
+        List<Map<String, Object>> loadedShapes = new ArrayList<>();
+        try {
+            loadedShapes = objectMapper.readValue(new File(filename), new TypeReference<List<Map<String, Object>>>() {});
+            for (Map<String, Object> shape : loadedShapes) {
+                String type = (String) shape.get("type");
+                if (type.equals("group")){
+                    shapeGroup.removeShape();
+                    List<Map<String, Object>> shapes1 = new ArrayList<>();
+                    shapes1 = (List<Map<String, Object>>) shape.get("shapes");
+                 //   System.out.println(shapes1);
+                    for (Map<String, Object> shape1 : shapes1){
+                        String typeG = (String) shape1.get("type");
+                        int xG = (int) shape1.get("x");
+                        int yG = (int) shape1.get("y");
+                        int sizeG = (int) shape1.get("size");
+                        Color colorG = Color.ORANGE;
+                        int angleSG = (int) shape1.get("angleS");
+                        shapeGroup.addShape(SHAPE_FACTORY.create(typeG , xG, yG, sizeG, colorG, angleSG));
+                        System.out.println("type " + shapeGroup.type);
+                        groupShapes.add(SHAPE_FACTORY.create(typeG , xG, yG, sizeG, colorG, angleSG));
+                        System.out.println("type = " + groupShapes);
+                    }
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return groupShapes;
+    }
+
 }

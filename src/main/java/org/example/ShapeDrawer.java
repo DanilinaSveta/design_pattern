@@ -229,7 +229,12 @@ public class ShapeDrawer extends JFrame {
         JOptionPane.showMessageDialog(this, "Shapes saved successfully!");
     }
     private void loadShapes(){
-        ShapeSerializer.readShapesFromJson("shapes.json",shapes, shapeGroup, SHAPE_FACTORY, groupShapes);
+        groupShapes = ShapeSerializer.GroupShapes(groupShapes,"shapes.json",shapeGroup,SHAPE_FACTORY);
+        shapes = ShapeSerializer.readShapesFromJson("shapes.json",shapes, shapeGroup, SHAPE_FACTORY);
+
+        for (Shape shape : groupShapes){
+            System.out.println(shape.type);
+        }
         repaint();
         JOptionPane.showMessageDialog(this, "Shapes loaded successfully!");
     }

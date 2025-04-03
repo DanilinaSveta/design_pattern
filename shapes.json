@@ -10,17 +10,5 @@
   "y" : 0,
   "size" : 0,
   "angleS" : 0,
-  "shapes" : [ {
-    "type" : "square",
-    "x" : 300,
-    "y" : 100,
-    "size" : 100,
-    "angleS" : 0
-  }, {
-    "type" : "triangle",
-    "x" : 500,
-    "y" : 100,
-    "size" : 100,
-    "angleS" : 0
-  } ]
+  "shapes" : [ ]
 } ]
