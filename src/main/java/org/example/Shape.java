@@ -2,7 +2,9 @@ package org.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 import java.awt.*;
+import java.util.List;
 
 public abstract class Shape {
     public String type;
@@ -40,6 +42,9 @@ public abstract class Shape {
         if (angleS == 360){
             angleS = 0;
         }
+    }
+    public List<Shape> getShapes(){
+        return null;
     }
 
 

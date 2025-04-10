@@ -5,20 +5,16 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ShapeDrawer extends JFrame {
     Color colorOrange = Color.ORANGE;
     Color colorGreen = Color.GREEN;
 
     private List<Shape> shapes = new ArrayList<>();
-    private List<Shape> groupShapes = new ArrayList<>();
-    private ShapeGroup shapeGroup;
+    private List<Shape> selectedShapes = new ArrayList<>();
 
     private Shape selectedShape = null;
     private Point delta;
-
-    private boolean btnG = false;
 
     private Rectangle selectionRectangle;
     private Point dragStart;
@@ -27,11 +23,10 @@ public class ShapeDrawer extends JFrame {
     private boolean isKeyPressed = false;
     private static final ShapeFactory SHAPE_FACTORY = new ShapeFactory();
 
-    public  int x = 100, y = 100, size = 100;
+    public  int x = 100, y = 100, size = 100, angleS = 0;
 
     public ShapeDrawer() {
         selectionRectangle = new Rectangle(0, 0, 0, 0);
-        shapeGroup = new ShapeGroup(0,0,0,colorOrange,0);
 
         setTitle("Drawer");
         setSize(1000,700);
@@ -76,22 +71,40 @@ public class ShapeDrawer extends JFrame {
         add(canvas,BorderLayout.CENTER);
 
         btnCircle.addActionListener(e ->{
-            shapes.add(SHAPE_FACTORY.create("circle", x, y, size, colorOrange, 0));
+            shapes.add(SHAPE_FACTORY.create("circle", x, y, size, colorOrange, angleS));
             canvas.repaint();
         });
         btnSquare.addActionListener(e -> {
-            shapes.add(SHAPE_FACTORY.create("square", x + 200, y, size, colorOrange, 0));
+            shapes.add(SHAPE_FACTORY.create("square", x + 200, y, size, colorOrange, angleS));
             canvas.repaint();
         });
         btnTriangle.addActionListener(e -> {
-            shapes.add(SHAPE_FACTORY.create("triangle", x + 400, y, size, colorOrange, 0));
+            shapes.add(SHAPE_FACTORY.create("triangle", x + 400, y, size, colorOrange, angleS));
             canvas.repaint();
         });
 
         btnGroup.addActionListener(e ->{
-            btnG = true;
-            shapes.remove(shapeGroup);
-            for (Shape shape : groupShapes){
+            int minX = 100000000, minY = 100000000, maxX = 0, maxY = 0, size = 0;
+            ShapeGroup shapeGroup = new ShapeGroup(minX,minY,size,colorOrange,angleS);
+
+            for (Shape shape : selectedShapes){
+                if (shape.x < minX){
+                    minX = shape.x;
+                }
+                if (shape.y < minY){
+                    minY = shape.y;
+                }
+                if (shape.x > maxX){
+                    maxX = shape.x;
+                    size = shape.size;
+                }
+                if (shape.y > maxY) {
+                    maxY = shape.y;
+                    size = shape.size;
+                }
+                shapeGroup.x = minX;
+                shapeGroup.y = minY;
+                shapeGroup.size = (maxX + size - minX);
                 shapeGroup.addShape(shape);
                 shapes.remove(shape);
             }
@@ -100,19 +113,18 @@ public class ShapeDrawer extends JFrame {
         });
 
         btnUnGroup.addActionListener(e -> {
-            btnG = false;
-            shapes.addAll(groupShapes);
-            shapes.remove(shapeGroup);
-            shapeGroup.removeShape();
-            groupShapes.clear();
+            for (Shape shape : selectedShapes){
+                if (shape.type.equals("group")){
+                    shapes.addAll(shape.getShapes());
+                    shapes.remove(shape);
+                }
+            }
             repaint();
         });
 
         btnTurn.addActionListener( e ->{
-            for (Shape shape : shapes){
-                if (shape.color == Color.GREEN || (shapeGroup.color == Color.GREEN && shape.type.equals("group") ))  {
-                    shape.angle(45);
-                }
+            for (Shape shape : selectedShapes){
+                shape.angle(45);
             }
             repaint();
         });
@@ -168,26 +180,23 @@ public class ShapeDrawer extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e){
                 canvas.requestFocusInWindow();
-                for (Shape shape : shapes) {
-                    if (!isKeyPressed){
-                        shape.select(false);
-                        shapeGroup.color = Color.ORANGE;
-                        if (!btnG){
-                            groupShapes.clear();
-                        }
-                        if (shape.isInside(e.getPoint())){
-                            shape.select(true);
-                            shapeGroup.color = Color.GREEN;
-                            selectedShape = shape;
-                            groupShapes.add(shape);
-                        }
-                    } else {
-                        if (shape.isInside(e.getPoint())){
-                            groupShapes.add(shape);
-                            shape.select(true);
-                            shapeGroup.color = Color.ORANGE;
-                        }
+                Shape selectedShape = null;
+                for (Shape shape : shapes){
+                    if (shape.isInside(e.getPoint())){
+                        selectedShape = shape;
+                        break;
                     }
+                }
+                if (!isKeyPressed) {
+                    for (Shape shape : selectedShapes) {
+                        shape.select(false);
+                    }
+                    selectedShapes.clear();
+                }
+                if(selectedShape != null)
+                {
+                    selectedShape.select(true);
+                    selectedShapes.add(selectedShape);
                 }
                 repaint();
             }
@@ -209,12 +218,12 @@ public class ShapeDrawer extends JFrame {
                         selectionRectangle.setBounds(x, y, width, height);
                         if (selectionRectangle.intersects(shape.x,shape.y,shape.size,shape.size)){
                             shape.select(true);
-                            if (!groupShapes.contains(shape)){
-                                groupShapes.add(shape);
+                            if (!selectedShapes.contains(shape)){
+                                selectedShapes.add(shape);
                             }
                         } else {
                             shape.select(false);
-                            groupShapes.remove(shape);
+                            selectedShapes.remove(shape);
                         }
                     }
                 }
@@ -229,12 +238,8 @@ public class ShapeDrawer extends JFrame {
         JOptionPane.showMessageDialog(this, "Shapes saved successfully!");
     }
     private void loadShapes(){
-        groupShapes = ShapeSerializer.GroupShapes(groupShapes,"shapes.json",shapeGroup,SHAPE_FACTORY);
-        shapes = ShapeSerializer.readShapesFromJson("shapes.json",shapes, shapeGroup, SHAPE_FACTORY);
-
-        for (Shape shape : groupShapes){
-            System.out.println(shape.type);
-        }
+        shapes.clear();
+        shapes = ShapeSerializer.readShapeFromJson("shapes.json",SHAPE_FACTORY);
         repaint();
         JOptionPane.showMessageDialog(this, "Shapes loaded successfully!");
     }

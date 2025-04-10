@@ -12,7 +12,7 @@ public class Circle extends Shape{
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(color);
         g2.rotate(Math.toRadians(angleS), x + (double) size / 2, y + (double) size );
-        g2.fillOval(x, y, size, size*2);
+        g2.fillOval(x, y, size, size);
         g2.rotate(Math.toRadians(-angleS), x + (double) size / 2, y + (double) size );
     }
     public boolean isInside(Point p){

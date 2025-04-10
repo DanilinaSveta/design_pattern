@@ -3,12 +3,27 @@
   "x" : 100,
   "y" : 100,
   "size" : 100,
-  "angleS" : 0
+  "angleS" : 0,
+  "shapes" : null
 }, {
   "type" : "group",
-  "x" : 0,
-  "y" : 0,
-  "size" : 0,
+  "x" : 300,
+  "y" : 100,
+  "size" : 300,
   "angleS" : 0,
-  "shapes" : [ ]
+  "shapes" : [ {
+    "type" : "square",
+    "x" : 300,
+    "y" : 100,
+    "size" : 100,
+    "angleS" : 0,
+    "shapes" : null
+  }, {
+    "type" : "triangle",
+    "x" : 500,
+    "y" : 100,
+    "size" : 100,
+    "angleS" : 0,
+    "shapes" : null
+  } ]
 } ]

@@ -79,7 +79,6 @@ public class ShapeGroup extends Shape{
     @Override
     public void move(int dx, int dy) {
         for (Shape shape : shapes) {
-           // System.out.println(shape.type);
             shape.move(dx, dy);
         }
     }
