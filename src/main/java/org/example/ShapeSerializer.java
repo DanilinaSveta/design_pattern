@@ -22,35 +22,45 @@ public class ShapeSerializer {
         }
     }
 
-    public static List<Shape> readShapeFromJson (String filename, ShapeFactory SHAPE_FACTORY){
-        List<Shape> shapes = new ArrayList<>();
+    public static void saveShapeToXML (List<Shape> shapes, String filename){
+
+    }
+
+
+    public static List<Shape> readShapeFromJson (
+            String filename,
+            List<Shape> shapes,
+            ShapeFactory SHAPE_FACTORY){
 
         try {
-            List<Shape> shapeList = objectMapper.readValue(new File(filename), new TypeReference<List<Shape>>() {});
-            System.out.println(shapeList);
-            for (Shape shape : shapeList){
-                if ("group".equals(shape.type)){
-                    ShapeGroup shapeGroup = new ShapeGroup(shape.x,shape.y,shape.size,Color.ORANGE,shape.angleS);
-                    for (Shape innerShape : ((ShapeGroup) shape).getShapes()){
-                       // shapeGroup.addShape(innerShape);
-                        shapeGroup.addShape(SHAPE_FACTORY.create(
-                                innerShape.type,
-                                innerShape.x,
-                                innerShape.y,
-                                innerShape.size,
-                                Color.ORANGE,
-                                innerShape.angleS));
+            List<Map<String, Object>> loadedShapes = new ArrayList<>();
+            loadedShapes = objectMapper.readValue(new File(filename), new TypeReference<List<Map<String, Object>>>() {});
+            shapes.clear();
+
+            for (Map<String, Object> shape : loadedShapes) {
+                String type = (String) shape.get("type");
+                int x = (int) shape.get("x");
+                int y = (int) shape.get("y");
+                int size = (int) shape.get("size");
+                Color color = Color.ORANGE;
+                int angleS = (int) shape.get("angleS");
+                if (type.equals("group")){
+                    Shape shapeGroup = SHAPE_FACTORY.create(type,x,y,size,Color.ORANGE, angleS);
+                    shapes.remove(shapeGroup);
+                    List<Map<String, Object>> shapes1 = new ArrayList<>();
+                    shapes1 = (List<Map<String, Object>>) shape.get("shapes");
+                    for (Map<String, Object> shape1 : shapes1){
+                        String typeG = (String) shape1.get("type");
+                        int xG = (int) shape1.get("x");
+                        int yG = (int) shape1.get("y");
+                        int sizeG = (int) shape1.get("size");
+                        Color colorG = Color.ORANGE;
+                        int angleSG = (int) shape1.get("angleS");
+                        shapeGroup.addShape(SHAPE_FACTORY.create(typeG , xG, yG, sizeG, colorG, angleSG));
                     }
-                   //shapes.add(shapeGroup);
-                    shapes.add(SHAPE_FACTORY.create(
-                            shapeGroup.type,
-                            shapeGroup.x,
-                            shapeGroup.y,
-                            shapeGroup.size,
-                            Color.ORANGE,
-                            shapeGroup.angleS));
+                    shapes.add(shapeGroup);
                 } else {
-                    shapes.add(SHAPE_FACTORY.create(shape.type,shape.x, shape.y,shape.size, Color.ORANGE,shape.angleS));
+                    shapes.add(SHAPE_FACTORY.create(type, x, y, size, color, angleS));
                 }
 
             }
@@ -60,5 +70,7 @@ public class ShapeSerializer {
 
         return shapes;
     }
+
+
 
 }

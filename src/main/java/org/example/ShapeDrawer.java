@@ -48,6 +48,8 @@ public class ShapeDrawer extends JFrame {
         JButton btnGroup = new JButton("Объединить");
         JButton btnUnGroup = new JButton("Разъединить");
         JButton btnTurn = new JButton("Поворот на 45");
+        JButton btnTriangleRed = new JButton("Все треугольники красные");
+        JButton btnSaveXML = new JButton("Сохранить в XML");
         
         buttonPanel.add(btnCircle);
         buttonPanel.add(btnSquare);
@@ -55,6 +57,7 @@ public class ShapeDrawer extends JFrame {
         buttonPanel.add(btnGroup);
         buttonPanel.add(btnUnGroup);
         buttonPanel.add(btnTurn);
+        buttonPanel.add(btnTriangleRed);
 
         buttonPanel2.add(btnSave);
         buttonPanel2.add(btnLoad);
@@ -85,7 +88,7 @@ public class ShapeDrawer extends JFrame {
 
         btnGroup.addActionListener(e ->{
             int minX = 100000000, minY = 100000000, maxX = 0, maxY = 0, size = 0;
-            ShapeGroup shapeGroup = new ShapeGroup(minX,minY,size,colorOrange,angleS);
+            Shape shapeGroup = SHAPE_FACTORY.create("group",x,y, size,Color.ORANGE, angleS);
 
             for (Shape shape : selectedShapes){
                 if (shape.x < minX){
@@ -129,8 +132,29 @@ public class ShapeDrawer extends JFrame {
             repaint();
         });
 
+        btnTriangleRed.addActionListener(e ->{
+            for (Shape shape : shapes){
+                if (shape.type.equals("triangle")){
+                    shape.color = Color.RED;
+
+                }
+                if (shape.getShapes() != null){
+                    ArrayList<Shape> groupShapes = new ArrayList<>();
+                    groupShapes.addAll(shape.getShapes());
+                    for (Shape shape1 : groupShapes){
+                        System.out.println(shape1.type);
+                        if (shape1.type.equals("triangle")){
+                            shape1.color = Color.RED;
+                        }
+                    }
+                }
+            }
+            repaint();
+        });
+
         btnSave.addActionListener(e -> saveShapes());
         btnLoad.addActionListener(e -> loadShapes());
+        btnSaveXML.addActionListener(e -> saveShapesXML());
 
         canvas.addKeyListener(new KeyAdapter() {
             @Override
@@ -239,9 +263,13 @@ public class ShapeDrawer extends JFrame {
     }
     private void loadShapes(){
         shapes.clear();
-        shapes = ShapeSerializer.readShapeFromJson("shapes.json",SHAPE_FACTORY);
+        ShapeSerializer.readShapeFromJson("shapes.json",shapes,SHAPE_FACTORY);
         repaint();
         JOptionPane.showMessageDialog(this, "Shapes loaded successfully!");
+    }
+
+    private void saveShapesXML(){
+
     }
 
     public class Canvas extends JPanel {

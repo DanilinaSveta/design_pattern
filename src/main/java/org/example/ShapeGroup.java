@@ -31,7 +31,7 @@ public class ShapeGroup extends Shape{
     public void paintComponent(Graphics g) {
         int maxX = 0, minX = -1;
         int maxY = 0, minY = -1;
-        int size = 0;
+        int sizeG = 0;
         for (Shape shape : shapes) {
             if (minX == -1 && minY == -1){
                 minX = shape.x;
@@ -45,15 +45,17 @@ public class ShapeGroup extends Shape{
             }
             if (shape.x > maxX){
                 maxX = shape.x;
-                size = shape.size;
+                sizeG = shape.size;
             }
             if (shape.y > maxY) {
                 maxY = shape.y;
-                size = shape.size;
+                sizeG = shape.size;
             }
         }
         Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(new Color(123, 226, 202, 128));
         g2.rotate(Math.toRadians(angleS), minX + (maxX+ size)/4, minY + (maxY+size)/4);
+        g2.drawRect(minX-10,minY-10,maxX+ sizeG-minX+20,maxY+sizeG-minY+20);
         for (Shape shape : shapes) {
             shape.paintComponent(g2);
         }
@@ -80,6 +82,8 @@ public class ShapeGroup extends Shape{
     public void move(int dx, int dy) {
         for (Shape shape : shapes) {
             shape.move(dx, dy);
+            this.x += dx;
+            this.y += dy;
         }
     }
 

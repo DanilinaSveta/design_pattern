@@ -1,11 +1,11 @@
 package org.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
+import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
 import java.util.List;
 
+@XmlRootElement
 public abstract class Shape {
     public String type;
     public int x, y, size;
