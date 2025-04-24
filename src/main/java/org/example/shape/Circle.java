@@ -1,9 +1,11 @@
-package org.example;
+package org.example.shape;
+
+import org.example.visitor.Visitor;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
-public class Circle extends Shape{
+public class Circle extends Shape {
     public Circle(int x, int y, int size, Color color, int angleS){
         super("circle", x, y, size, color,angleS);
     }
@@ -30,5 +32,9 @@ public class Circle extends Shape{
     public void move(int dx, int dy) {
         this.x += dx;
         this.y += dy;
+    }
+
+    public void accept (Visitor visitor) throws IOException {
+        visitor.visit(this);
     }
 }

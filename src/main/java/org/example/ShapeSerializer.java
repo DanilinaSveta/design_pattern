@@ -2,6 +2,7 @@ package org.example;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.shape.Shape;
 
 import java.awt.*;
 import java.io.File;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class ShapeSerializer {
     private  static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static void saveShapesToJson (List<Shape> shapes, String filename){
+    public static void saveShapesToJson (List<org.example.shape.Shape> shapes, String filename){
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filename), shapes);
         } catch (IOException e) {
@@ -22,14 +23,10 @@ public class ShapeSerializer {
         }
     }
 
-    public static void saveShapeToXML (List<Shape> shapes, String filename){
 
-    }
-
-
-    public static List<Shape> readShapeFromJson (
+    public static List<org.example.shape.Shape> readShapeFromJson (
             String filename,
-            List<Shape> shapes,
+            List<org.example.shape.Shape> shapes,
             ShapeFactory SHAPE_FACTORY){
 
         try {

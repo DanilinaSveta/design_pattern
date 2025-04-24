@@ -1,7 +1,10 @@
-package org.example;
+package org.example.shape;
+
+import org.example.visitor.Visitor;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 public class Triangle extends Shape {
     private Rectangle2D rectangle;
@@ -42,6 +45,10 @@ public class Triangle extends Shape {
         yPoints[1] += dy;
         yPoints[2] += dy;
     }
+    public void accept (Visitor visitor) throws IOException {
+        visitor.visit(this);
+    }
+
 //    @Override
 //    public Rectangle2D getBounds() {
 //        return rectangle;

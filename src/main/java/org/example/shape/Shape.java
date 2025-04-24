@@ -1,11 +1,13 @@
-package org.example;
+package org.example.shape;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.example.visitor.Visitor;
+
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 
-@XmlRootElement
+
 public abstract class Shape {
     public String type;
     public int x, y, size;
@@ -29,6 +31,7 @@ public abstract class Shape {
     public abstract void addShape(Shape shape);
     public abstract void removeShape();
     public abstract void move(int dx, int dy);
+    public abstract void accept(Visitor visitor) throws IOException;
 
     public void select(boolean s){
         if (s){

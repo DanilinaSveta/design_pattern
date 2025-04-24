@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<shapes>
+  <Circle>
+    <type>circle</type>
+    <x>100</x>
+    <y>100</y>
+    <size>100</size>
+    <angleS>0</angleS>
+  </Circle>
+  <ShapeGroup>
+    <type>group</type>
+    <x>300</x>
+    <y>100</y>
+    <size>300</size>
+    <angleS>0</angleS>
+    <Square>
+      <type>square</type>
+      <x>300</x>
+      <y>100</y>
+      <size>100</size>
+      <angleS>0</angleS>
+    </Square>
+    <Triangle>
+      <type>triangle</type>
+      <x>500</x>
+      <y>100</y>
+      <size>100</size>
+      <angleS>0</angleS>
+    </Triangle>
+  </ShapeGroup>
+</shapes>

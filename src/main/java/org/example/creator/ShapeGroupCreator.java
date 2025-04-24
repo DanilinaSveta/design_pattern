@@ -1,4 +1,7 @@
-package org.example;
+package org.example.creator;
+
+import org.example.shape.Shape;
+import org.example.shape.ShapeGroup;
 
 import java.awt.*;
 

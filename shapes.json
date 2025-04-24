@@ -6,24 +6,17 @@
   "angleS" : 0,
   "shapes" : null
 }, {
-  "type" : "group",
-  "x" : 396,
-  "y" : 141,
-  "size" : 349,
+  "type" : "square",
+  "x" : 300,
+  "y" : 100,
+  "size" : 100,
   "angleS" : 0,
-  "shapes" : [ {
-    "type" : "square",
-    "x" : 368,
-    "y" : 155,
-    "size" : 100,
-    "angleS" : 0,
-    "shapes" : null
-  }, {
-    "type" : "triangle",
-    "x" : 617,
-    "y" : 121,
-    "size" : 100,
-    "angleS" : 0,
-    "shapes" : null
-  } ]
+  "shapes" : null
+}, {
+  "type" : "triangle",
+  "x" : 500,
+  "y" : 100,
+  "size" : 100,
+  "angleS" : 0,
+  "shapes" : null
 } ]

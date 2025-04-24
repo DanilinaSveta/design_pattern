@@ -1,10 +1,13 @@
-package org.example;
+package org.example.shape;
+
+import org.example.visitor.Visitor;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShapeGroup extends Shape{
+public class ShapeGroup extends Shape {
     private List<Shape> shapes;
 
     public ShapeGroup(int x, int y, int size, Color color, int angleS) {
@@ -85,6 +88,9 @@ public class ShapeGroup extends Shape{
             this.x += dx;
             this.y += dy;
         }
+    }
+    public void accept (Visitor visitor) throws IOException {
+        visitor.visit(this);
     }
 
 }
