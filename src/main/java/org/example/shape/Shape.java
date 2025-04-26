@@ -1,19 +1,30 @@
 package org.example.shape;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.example.visitor.Visitor;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-
 public abstract class Shape {
+
     public String type;
-    public int x, y, size;
+    public int x;
+    public int y;
+    public int size;
     public int angleS;
     @JsonIgnore
     public Color color;
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
     public Shape(){}
 
@@ -41,14 +52,52 @@ public abstract class Shape {
         }
     }
     public void angle(int angle){
-        angleS += angle;
-        if (angleS == 360){
-            angleS = 0;
+        setAngleS(getAngleS()+angle);
+        if (getAngleS() == 360){
+            setAngleS(0);
         }
     }
     public List<Shape> getShapes(){
         return null;
     }
 
+    public int getX() {
+        return x;
+    }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getAngleS() {
+        return angleS;
+    }
+
+    public void setAngleS(int angleS) {
+        this.angleS = angleS;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

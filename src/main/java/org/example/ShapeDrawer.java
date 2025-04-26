@@ -1,10 +1,12 @@
 package org.example;
 
+import org.example.creator.ShapeLoader;
 import org.example.shape.Shape;
 import org.example.visitor.XmlDeserializer;
 import org.example.visitor.XmlSerializerVisitor;
 
 import javax.swing.*;
+import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -102,27 +104,31 @@ public class ShapeDrawer extends JFrame {
         });
 
         btnGroup.addActionListener(e ->{
-            int minX = 100000000, minY = 100000000, maxX = 0, maxY = 0, size = 0;
+            int minX = -1, minY = -1, maxX = 0, maxY = 0, size = 0;
             org.example.shape.Shape shapeGroup = SHAPE_FACTORY.create("group",x,y, size,Color.ORANGE, angleS);
 
             for (org.example.shape.Shape shape : selectedShapes){
-                if (shape.x < minX){
-                    minX = shape.x;
+                if (minX == -1 && minY == -1){
+                    minX = shape.getX();
+                    minY = shape.getY();
                 }
-                if (shape.y < minY){
-                    minY = shape.y;
+                if (shape.getX() < minX){
+                    minX = shape.getX();
                 }
-                if (shape.x > maxX){
-                    maxX = shape.x;
-                    size = shape.size;
+                if (shape.getY() < minY){
+                    minY = shape.getY();
                 }
-                if (shape.y > maxY) {
-                    maxY = shape.y;
-                    size = shape.size;
+                if (shape.getX() > maxX){
+                    maxX = shape.getX();
+                    size = shape.getSize();
                 }
-                shapeGroup.x = minX;
-                shapeGroup.y = minY;
-                shapeGroup.size = (maxX + size - minX);
+                if (shape.getY() > maxY) {
+                    maxY = shape.getY();
+                    size = shape.getSize();
+                }
+                shapeGroup.setX(minX);
+                shapeGroup.setY(minY);
+                shapeGroup.setSize(maxX + size - minX);
                 shapeGroup.addShape(shape);
                 shapes.remove(shape);
             }
@@ -148,27 +154,18 @@ public class ShapeDrawer extends JFrame {
         });
 
         btnTriangleRed.addActionListener(e ->{
-            for (org.example.shape.Shape shape : shapes){
-                if (shape.type.equals("triangle")){
-                    shape.color = Color.RED;
-
-                }
-                if (shape.getShapes() != null){
-                    ArrayList<org.example.shape.Shape> groupShapes = new ArrayList<>();
-                    groupShapes.addAll(shape.getShapes());
-                    for (org.example.shape.Shape shape1 : groupShapes){
-                        System.out.println(shape1.type);
-                        if (shape1.type.equals("triangle")){
-                            shape1.color = Color.RED;
-                        }
-                    }
-                }
-            }
-            repaint();
+            shapes.add(SHAPE_FACTORY.create("redtriangle", x + 600, y, size, Color.RED, angleS));
+            canvas.repaint();
         });
 
         btnSave.addActionListener(e -> saveShapes());
-        btnLoad.addActionListener(e -> loadShapes());
+        btnLoad.addActionListener(e -> {
+            try {
+                loadShapes();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         btnSaveXML.addActionListener(e -> {
             try {
                 saveShapesXML();
@@ -180,7 +177,7 @@ public class ShapeDrawer extends JFrame {
             try {
                 loadShapesXML();
                 canvas.repaint();
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         });
@@ -269,7 +266,7 @@ public class ShapeDrawer extends JFrame {
                         int width = Math.abs(dragStart.x - e.getX());
                         int height = Math.abs(dragStart.y - e.getY());
                         selectionRectangle.setBounds(x, y, width, height);
-                        if (selectionRectangle.intersects(shape.x,shape.y,shape.size,shape.size)){
+                        if (selectionRectangle.intersects(shape.getX(),shape.getY(),shape.getSize(),shape.getSize())){
                             shape.select(true);
                             if (!selectedShapes.contains(shape)){
                                 selectedShapes.add(shape);
@@ -290,25 +287,29 @@ public class ShapeDrawer extends JFrame {
         ShapeSerializer.saveShapesToJson(shapes,"shapes.json");
         JOptionPane.showMessageDialog(this, "Shapes saved successfully!");
     }
-    private void loadShapes(){
+    private void loadShapes() throws IOException {
         shapes.clear();
-        ShapeSerializer.readShapeFromJson("shapes.json",shapes,SHAPE_FACTORY);
+        shapes = ShapeSerializer.loadFromJSON("shapes.json");
         repaint();
         JOptionPane.showMessageDialog(this, "Shapes loaded successfully!");
     }
 
     private void saveShapesXML() throws IOException {
-        XmlSerializerVisitor xmlSerializerVisitor = new XmlSerializerVisitor();
+        XmlSerializerVisitor xmlSerializerVisitor = new XmlSerializerVisitor("Shapes");
         for (Shape shape : shapes){
             shape.accept(xmlSerializerVisitor);
         }
-        xmlSerializerVisitor.saveToXML("shapes.xml");
+        xmlSerializerVisitor.saveToFile("shapes.xml");
         JOptionPane.showMessageDialog(this, "Shapes saved successfully!");
     }
 
-    private void loadShapesXML() throws IOException {
+    private void loadShapesXML() throws Exception {
         shapes.clear();
-        XmlDeserializer.readShapeFromXml("shapes.xml",shapes,SHAPE_FACTORY);
+//        XmlDeserializer xmlDeserializer = new XmlDeserializer();
+//        xmlDeserializer.loadShapesFromFile("shapes.xml");
+//        shapes = xmlDeserializer.getShapes();
+        ShapeLoader shapeLoader = new ShapeLoader();
+        shapes = shapeLoader.loadShapesFromFile("shapes.xml");
         repaint();
         JOptionPane.showMessageDialog(this, "Shapes loaded successfully!");
     }

@@ -1,5 +1,8 @@
 package org.example.shape;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.example.visitor.Visitor;
 
 import java.awt.*;
@@ -8,11 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShapeGroup extends Shape {
+
     private List<Shape> shapes;
+
 
     public ShapeGroup(int x, int y, int size, Color color, int angleS) {
         super("group", x, y, size, color, angleS);
-        this.shapes = new ArrayList<>();
+        //this.shapes = new ArrayList<>();
+        shapes = new ArrayList<>();
     }
 
     @Override
@@ -23,6 +29,10 @@ public class ShapeGroup extends Shape {
     }
     public List<Shape> getShapes(){
         return shapes;
+    }
+
+    public void setShapes(List<Shape> shapes) {
+        this.shapes = shapes;
     }
 
     @Override
@@ -37,32 +47,32 @@ public class ShapeGroup extends Shape {
         int sizeG = 0;
         for (Shape shape : shapes) {
             if (minX == -1 && minY == -1){
-                minX = shape.x;
-                minY = shape.y;
+                minX = shape.getX();
+                minY = shape.getY();
             }
-            if (shape.x < minX){
-                minX = shape.x;
+            if (shape.getX() < minX){
+                minX = shape.getX();
             }
-            if (shape.y < minY){
-                minY = shape.y;
+            if (shape.getY() < minY){
+                minY = shape.getY();
             }
-            if (shape.x > maxX){
-                maxX = shape.x;
-                sizeG = shape.size;
+            if (shape.getX() > maxX){
+                maxX = shape.getX();
+                sizeG = shape.getSize();
             }
-            if (shape.y > maxY) {
-                maxY = shape.y;
-                sizeG = shape.size;
+            if (shape.getY() > maxY) {
+                maxY = shape.getY();
+                sizeG = shape.getSize();
             }
         }
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(new Color(123, 226, 202, 128));
-        g2.rotate(Math.toRadians(angleS), minX + (maxX+ size)/4, minY + (maxY+size)/4);
+        g2.rotate(Math.toRadians(getAngleS()), minX + (maxX+ getSize())/4, minY + (maxY+getSize())/4);
         g2.drawRect(minX-10,minY-10,maxX+ sizeG-minX+20,maxY+sizeG-minY+20);
         for (Shape shape : shapes) {
             shape.paintComponent(g2);
         }
-        g2.rotate(Math.toRadians(-angleS), minX +(maxX+ size)/4, minY + (maxY+size)/4);
+        g2.rotate(Math.toRadians(-getAngleS()), minX +(maxX+ getSize())/4, minY + (maxY+getSize())/4);
     }
 
     @Override
@@ -85,9 +95,11 @@ public class ShapeGroup extends Shape {
     public void move(int dx, int dy) {
         for (Shape shape : shapes) {
             shape.move(dx, dy);
-            this.x += dx;
-            this.y += dy;
         }
+//        this.x += dx;
+//        this.y += dy;
+        setX(getX() + dx);
+        setY(getY() + dy);
     }
     public void accept (Visitor visitor) throws IOException {
         visitor.visit(this);
