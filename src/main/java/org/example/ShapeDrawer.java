@@ -2,17 +2,12 @@ package org.example;
 
 import org.example.creator.ShapeLoader;
 import org.example.shape.Shape;
-import org.example.visitor.XmlDeserializer;
 import org.example.visitor.XmlSerializerVisitor;
 
 import javax.swing.*;
-import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +97,10 @@ public class ShapeDrawer extends JFrame {
             shapes.add(SHAPE_FACTORY.create("triangle", x + 400, y, size, colorOrange, angleS));
             canvas.repaint();
         });
+        btnTriangleRed.addActionListener(e ->{
+            shapes.add(SHAPE_FACTORY.create("redtriangle", x + 600, y, size, Color.RED, angleS));
+            canvas.repaint();
+        });
 
         btnGroup.addActionListener(e ->{
             int minX = -1, minY = -1, maxX = 0, maxY = 0, size = 0;
@@ -153,10 +152,7 @@ public class ShapeDrawer extends JFrame {
             repaint();
         });
 
-        btnTriangleRed.addActionListener(e ->{
-            shapes.add(SHAPE_FACTORY.create("redtriangle", x + 600, y, size, Color.RED, angleS));
-            canvas.repaint();
-        });
+
 
         btnSave.addActionListener(e -> saveShapes());
         btnLoad.addActionListener(e -> {
@@ -305,9 +301,6 @@ public class ShapeDrawer extends JFrame {
 
     private void loadShapesXML() throws Exception {
         shapes.clear();
-//        XmlDeserializer xmlDeserializer = new XmlDeserializer();
-//        xmlDeserializer.loadShapesFromFile("shapes.xml");
-//        shapes = xmlDeserializer.getShapes();
         ShapeLoader shapeLoader = new ShapeLoader();
         shapes = shapeLoader.loadShapesFromFile("shapes.xml");
         repaint();
