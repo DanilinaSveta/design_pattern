@@ -1,6 +1,5 @@
 package org.example.shape;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.example.visitor.Visitor;
 
 import java.awt.*;

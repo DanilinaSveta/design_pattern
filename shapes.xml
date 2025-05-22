@@ -1,56 +1,112 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Shapes>
-    <Square>
-        <type>square</type>
-        <x>391</x>
-        <y>327</y>
-        <size>100</size>
-        <angleS>0</angleS>
-    </Square>
     <Group>
         <type>group</type>
-        <x>158</x>
-        <y>42</y>
-        <size>646</size>
+        <x>1040</x>
+        <y>192</y>
+        <size>574</size>
         <angleS>0</angleS>
         <Group>
             <type>group</type>
-            <x>569</x>
-            <y>42</y>
-            <size>216</size>
-            <angleS>0</angleS>
-            <Triangle>
-                <type>triangle</type>
-                <x>569</x>
-                <y>42</y>
-                <size>100</size>
-                <angleS>0</angleS>
-            </Triangle>
-            <RedTriangle>
-                <type>redtriangle</type>
-                <x>685</x>
-                <y>46</y>
-                <size>100</size>
-                <angleS>0</angleS>
-            </RedTriangle>
-        </Group>
-        <Group>
-            <type>group</type>
-            <x>158</x>
-            <y>54</y>
-            <size>235</size>
+            <x>1040</x>
+            <y>197</y>
+            <size>238</size>
             <angleS>0</angleS>
             <Circle>
                 <type>circle</type>
-                <x>158</x>
-                <y>54</y>
+                <x>1040</x>
+                <y>197</y>
                 <size>100</size>
                 <angleS>0</angleS>
             </Circle>
             <Square>
                 <type>square</type>
-                <x>293</x>
-                <y>60</y>
+                <x>1178</x>
+                <y>199</y>
+                <size>100</size>
+                <angleS>0</angleS>
+            </Square>
+        </Group>
+        <Group>
+            <type>group</type>
+            <x>1398</x>
+            <y>192</y>
+            <size>216</size>
+            <angleS>0</angleS>
+            <Triangle>
+                <type>triangle</type>
+                <x>1398</x>
+                <y>192</y>
+                <size>100</size>
+                <angleS>0</angleS>
+            </Triangle>
+            <RedTriangle>
+                <type>redtriangle</type>
+                <x>1514</x>
+                <y>196</y>
+                <size>100</size>
+                <angleS>0</angleS>
+            </RedTriangle>
+        </Group>
+    </Group>
+    <Group>
+        <type>group</type>
+        <x>206</x>
+        <y>193</y>
+        <size>336</size>
+        <angleS>0</angleS>
+        <Circle>
+            <type>circle</type>
+            <x>198</x>
+            <y>205</y>
+            <size>100</size>
+            <angleS>0</angleS>
+        </Circle>
+        <Circle>
+            <type>circle</type>
+            <x>308</x>
+            <y>207</y>
+            <size>100</size>
+            <angleS>0</angleS>
+        </Circle>
+        <Group>
+            <type>group</type>
+            <x>213</x>
+            <y>193</y>
+            <size>210</size>
+            <angleS>0</angleS>
+            <Circle>
+                <type>circle</type>
+                <x>198</x>
+                <y>205</y>
+                <size>100</size>
+                <angleS>0</angleS>
+            </Circle>
+            <Circle>
+                <type>circle</type>
+                <x>308</x>
+                <y>207</y>
+                <size>100</size>
+                <angleS>0</angleS>
+            </Circle>
+        </Group>
+        <Group>
+            <type>group</type>
+            <x>206</x>
+            <y>340</y>
+            <size>219</size>
+            <angleS>0</angleS>
+            <Square>
+                <type>square</type>
+                <x>206</x>
+                <y>344</y>
+                <size>100</size>
+                <angleS>0</angleS>
+            </Square>
+            <Square>
+                <type>square</type>
+                <x>325</x>
+                <y>340</y>
                 <size>100</size>
                 <angleS>0</angleS>
             </Square>

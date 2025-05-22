@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.creator.ShapeLoader;
 import org.example.shape.Shape;
 import org.example.visitor.XmlSerializerVisitor;
 
@@ -43,6 +42,7 @@ public class ShapeDrawer extends JFrame {
         JPanel buttonPanel = new JPanel();
         JPanel buttonPanel2 = new JPanel();
         JPanel buttonPanel3 = new JPanel();
+        JPanel buttonPanel4 = new JPanel();
 
         Box box = Box.createVerticalBox();
 
@@ -54,16 +54,13 @@ public class ShapeDrawer extends JFrame {
         JButton btnGroup = new JButton("Объединить");
         JButton btnUnGroup = new JButton("Разъединить");
         JButton btnTurn = new JButton("Поворот на 45");
-        JButton btnTriangleRed = new JButton("Все треугольники красные");
+        JButton btnTriangleRed = new JButton("Красный треугольник");
         JButton btnSaveXML = new JButton("Сохранить в XML");
         JButton btnLoadXML = new JButton("Загрузка XML");
         
         buttonPanel.add(btnCircle);
         buttonPanel.add(btnSquare);
         buttonPanel.add(btnTriangle);
-        buttonPanel.add(btnGroup);
-        buttonPanel.add(btnUnGroup);
-        buttonPanel.add(btnTurn);
         buttonPanel.add(btnTriangleRed);
 
         buttonPanel2.add(btnSave);
@@ -72,11 +69,19 @@ public class ShapeDrawer extends JFrame {
         buttonPanel3.add(btnSaveXML);
         buttonPanel3.add(btnLoadXML);
 
+        buttonPanel4.add(btnGroup);
+        buttonPanel4.add(btnUnGroup);
+        buttonPanel4.add(btnTurn);
+
         buttonPanel.requestFocusInWindow();
         buttonPanel2.requestFocusInWindow();
         buttonPanel3.requestFocusInWindow();
+        buttonPanel4.requestFocusInWindow();
+
+        box.requestFocusInWindow();
 
         box.add(buttonPanel);
+        box.add(buttonPanel4);
         box.add(buttonPanel2);
         box.add(buttonPanel3);
 
@@ -219,30 +224,47 @@ public class ShapeDrawer extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 dragging = false;
                 selectionRectangle.setSize(0, 0); // Сброс выделения
-                selectedShape = null;
+                //selectedShape = null;
                 repaint();
             }
 
             @Override
             public void mouseClicked(MouseEvent e){
                 canvas.requestFocusInWindow();
-                org.example.shape.Shape selectedShape = null;
-                for (org.example.shape.Shape shape : shapes){
-                    if (shape.isInside(e.getPoint())){
-                        selectedShape = shape;
-                        break;
-                    }
-                }
+               // org.example.shape.Shape selectedShape = null;
                 if (!isKeyPressed) {
-                    for (org.example.shape.Shape shape : selectedShapes) {
-                        shape.select(false);
+                    for (org.example.shape.Shape shape : shapes) {
+                        if (shape.isInside(e.getPoint())){
+                            selectedShape = shape;
+                            break;
+                        } else {
+                            selectedShapes.clear();
+                            selectedShape = null;
+                            selectedShape.select(false);
+                        }
+//                        System.out.println("selected Shapes");
+//                        shape.select(false);
                     }
-                    selectedShapes.clear();
-                }
-                if(selectedShape != null)
-                {
-                    selectedShape.select(true);
-                    selectedShapes.add(selectedShape);
+                    if(selectedShape != null && !selectedShapes.contains(selectedShape)) {
+                        selectedShape.select(true);
+                        selectedShapes.add(selectedShape);
+                    }
+//                    System.out.println("!keyPressed");
+//                    selectedShapes.clear();
+                } else {
+                    for (org.example.shape.Shape shape : shapes){
+                        if (shape.isInside(e.getPoint())){
+                            selectedShape = shape;
+                            break;
+                        } else {
+                            selectedShapes.clear();
+                            selectedShape = null;
+                        }
+                    }
+                    if(selectedShape != null && !selectedShapes.contains(selectedShape)) {
+                        selectedShape.select(true);
+                        selectedShapes.add(selectedShape);
+                    }
                 }
                 repaint();
             }
@@ -251,16 +273,16 @@ public class ShapeDrawer extends JFrame {
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 if (!dragging){
-                    selectedShape.move(e.getX() - delta.x, e.getY() - delta.y);
+                    selectedShape.move(e.getX() - delta.x,e.getY() - delta.y);
                     delta.x = e.getX();
                     delta.y = e.getY();
                 }
                 if (dragging) {
                     for (org.example.shape.Shape shape : shapes){
-                        int x = Math.min(dragStart.x, e.getX());
-                        int y = Math.min(dragStart.y, e.getY());
-                        int width = Math.abs(dragStart.x - e.getX());
-                        int height = Math.abs(dragStart.y - e.getY());
+                        int x = (int) Math.min(dragStart.getX(), e.getX());
+                        int y = (int) Math.min(dragStart.getY(), e.getY());
+                        int width = (int) Math.abs(dragStart.getX() - e.getX());
+                        int height = (int) Math.abs(dragStart.getY() - e.getY());
                         selectionRectangle.setBounds(x, y, width, height);
                         if (selectionRectangle.intersects(shape.getX(),shape.getY(),shape.getSize(),shape.getSize())){
                             shape.select(true);

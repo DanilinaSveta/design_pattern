@@ -1,8 +1,5 @@
 package org.example.shape;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.example.visitor.Visitor;
 
 import java.awt.*;
@@ -66,10 +63,16 @@ public class ShapeGroup extends Shape {
             }
         }
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(new Color(123, 226, 202, 128));
+      //  g2.setColor(new Color(123, 226, 202, 128));
         g2.rotate(Math.toRadians(getAngleS()), minX + (maxX+ getSize())/4, minY + (maxY+getSize())/4);
-        g2.drawRect(minX-10,minY-10,maxX+ sizeG-minX+20,maxY+sizeG-minY+20);
+
         for (Shape shape : shapes) {
+            g2.setColor(new Color(123, 226, 202, 128));
+            if (shape.getType().equals("triangle") || shape.getType().equals("redtriangle")){
+                g2.drawRect(minX-getSize()/4,minY-10,maxX+ sizeG-minX+20,maxY+sizeG-minY+20);
+            } else {
+                g2.drawRect(minX-10,minY-10,maxX+ sizeG-minX+20,maxY+sizeG-minY+20);
+            }
             shape.paintComponent(g2);
         }
         g2.rotate(Math.toRadians(-getAngleS()), minX +(maxX+ getSize())/4, minY + (maxY+getSize())/4);
